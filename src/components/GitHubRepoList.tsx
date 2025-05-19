@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import { List, ListItem, ListItemText, CircularProgress, Typography, Paper } from '@material-ui/core';
+import RepoDetailsModal from './RepoDetailsModal';
 
 const GET_REPOS = gql`
   query {
@@ -14,14 +15,34 @@ const GET_REPOS = gql`
           stargazerCount
           forkCount
           updatedAt
+          owner {
+            login
+          }
         }
       }
     }
   }
 `;
 
+interface SelectedRepo {
+  name: string;
+  owner: string;
+}
+
 const GitHubRepoList: React.FC = () => {
+  const [selectedRepo, setSelectedRepo] = useState<SelectedRepo | null>(null);
   const { loading, error, data } = useQuery(GET_REPOS);
+
+  const handleRepoClick = (repo: any) => {
+    setSelectedRepo({
+      name: repo.name,
+      owner: repo.owner.login,
+    });
+  };
+
+  const handleCloseModal = () => {
+    setSelectedRepo(null);
+  };
 
   if (loading) return <CircularProgress />;
   if (error) return <Typography color="error">Error: {error.message}</Typography>;
@@ -33,7 +54,12 @@ const GitHubRepoList: React.FC = () => {
       <Typography variant="h4" gutterBottom>My GitHub Repositories</Typography>
       <List>
         {repos.map((repo: any) => (
-          <ListItem key={repo.id} button component="a" href={repo.url} target="_blank">
+          <ListItem 
+            key={repo.id} 
+            button 
+            onClick={() => handleRepoClick(repo)}
+            style={{ cursor: 'pointer' }}
+          >
             <ListItemText
               primary={repo.name}
               secondary={repo.description || 'No description'}
@@ -44,6 +70,15 @@ const GitHubRepoList: React.FC = () => {
           </ListItem>
         ))}
       </List>
+
+      {selectedRepo && (
+        <RepoDetailsModal
+          open={!!selectedRepo}
+          onClose={handleCloseModal}
+          repoName={selectedRepo.name}
+          repoOwner={selectedRepo.owner}
+        />
+      )}
     </Paper>
   );
 };
