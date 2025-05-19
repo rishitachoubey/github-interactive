@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useMutation, gql } from '@apollo/client';
 import {
   Paper,
@@ -14,8 +14,8 @@ import {
   FormControl,
   FormHelperText,
   Grid,
-} from '@material-ui/core';
-import { Error as ErrorIcon } from '@material-ui/icons';
+} from '@mui/material';
+import ErrorIcon from '@mui/icons-material/Error';
 
 const GET_REPOS = gql`
   query {
@@ -103,6 +103,10 @@ const CreateRepoForm: React.FC<CreateRepoFormProps> = ({ onSuccess }) => {
     awaitRefetchQueries: true,
   });
 
+  useEffect(() => {
+    console.log('CreateRepoForm mounted');
+  }, []);
+
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
@@ -124,6 +128,7 @@ const CreateRepoForm: React.FC<CreateRepoFormProps> = ({ onSuccess }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Submitting form', formData);
     if (!validateForm()) return;
 
     try {
@@ -134,7 +139,9 @@ const CreateRepoForm: React.FC<CreateRepoFormProps> = ({ onSuccess }) => {
           visibility: formData.visibility,
         },
       });
+      console.log('Repository creation mutation sent');
     } catch (error) {
+      console.error('Error in mutation', error);
       // Error is handled in onError callback
     }
   };
@@ -162,7 +169,7 @@ const CreateRepoForm: React.FC<CreateRepoFormProps> = ({ onSuccess }) => {
 
       <form onSubmit={handleSubmit}>
         <Grid container spacing={3}>
-          <Grid item xs={12}>
+          <Grid sx={{ width: '100%' }}>
             <FormControl error={!!errors.name} fullWidth>
               <TextField
                 label="Repository Name"
@@ -185,7 +192,7 @@ const CreateRepoForm: React.FC<CreateRepoFormProps> = ({ onSuccess }) => {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid sx={{ width: '100%' }}>
             <TextField
               label="Description (optional)"
               name="description"
@@ -204,7 +211,7 @@ const CreateRepoForm: React.FC<CreateRepoFormProps> = ({ onSuccess }) => {
             />
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid sx={{ width: '100%' }}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -218,7 +225,7 @@ const CreateRepoForm: React.FC<CreateRepoFormProps> = ({ onSuccess }) => {
             />
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid sx={{ width: '100%' }}>
             <Box display="flex" justifyContent="flex-end">
               <Button
                 type="submit"

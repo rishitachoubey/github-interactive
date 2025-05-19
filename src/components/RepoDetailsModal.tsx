@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import {
   Dialog,
@@ -21,8 +21,9 @@ import {
   FormControl,
   InputLabel,
   Grid,
-} from '@material-ui/core';
-import { Close as CloseIcon, Sort as SortIcon } from '@material-ui/icons';
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import SortIcon from '@mui/icons-material/Sort';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -99,6 +100,13 @@ const RepoDetailsModal: React.FC<RepoDetailsModalProps> = ({ open, onClose, repo
     skip: !open,
   });
 
+  useEffect(() => {
+    console.log('RepoDetailsModal mounted', { open, onClose, repoName, repoOwner });
+    return () => {
+      console.log('RepoDetailsModal unmounted');
+    };
+  }, []);
+
   const handleTabChange = (_: React.ChangeEvent<{}>, newValue: PullRequestState) => {
     setActiveTab(newValue);
     setEndCursor(null);
@@ -168,13 +176,13 @@ const RepoDetailsModal: React.FC<RepoDetailsModalProps> = ({ open, onClose, repo
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
-        <Grid container justify="space-between" alignItems="center">
-          <Grid item>
+        <Grid container sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+          <Grid sx={{ flexGrow: 1 }}>
             <Typography variant="h6">
               {repoOwner}/{repoName} - Pull Requests
             </Typography>
           </Grid>
-          <Grid item>
+          <Grid>
             <IconButton onClick={onClose} size="small">
               <CloseIcon />
             </IconButton>
@@ -183,14 +191,14 @@ const RepoDetailsModal: React.FC<RepoDetailsModalProps> = ({ open, onClose, repo
       </DialogTitle>
 
       <Box px={2}>
-        <Grid container spacing={2} alignItems="center">
-          <Grid item>
+        <Grid container spacing={2} sx={{ alignItems: 'center' }}>
+          <Grid sx={{ flexGrow: 1 }}>
             <Tabs value={activeTab} onChange={handleTabChange}>
               <Tab label="Open" value="OPEN" />
               <Tab label="Closed" value="CLOSED" />
             </Tabs>
           </Grid>
-          <Grid item>
+          <Grid>
             <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
               <InputLabel>Sort By</InputLabel>
               <Select
@@ -203,7 +211,7 @@ const RepoDetailsModal: React.FC<RepoDetailsModalProps> = ({ open, onClose, repo
               </Select>
             </FormControl>
           </Grid>
-          <Grid item>
+          <Grid>
             <Button
               variant="outlined"
               size="small"
@@ -224,7 +232,7 @@ const RepoDetailsModal: React.FC<RepoDetailsModalProps> = ({ open, onClose, repo
             <List>
               {data.repository.pullRequests.nodes.map((pr: any) => (
                 <React.Fragment key={pr.id}>
-                  <ListItem button component="a" href={pr.url} target="_blank">
+                  <ListItem component="a" href={pr.url} target="_blank" rel="noopener noreferrer">
                     <ListItemText
                       primary={
                         <Box display="flex" alignItems="center" flexWrap="wrap" gap={1}>
