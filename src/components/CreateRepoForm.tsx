@@ -184,11 +184,12 @@ const CreateRepoForm: React.FC<CreateRepoFormProps> = ({ onSuccess }) => {
                 inputProps={{
                   'aria-label': 'Repository name',
                   maxLength: 100,
+                  'data-testid': 'repo-name-input',
                 }}
               />
-              <FormHelperText>
-                Only letters, numbers, hyphens, and underscores are allowed
-              </FormHelperText>
+              {errors.name && (
+                <span data-testid="repo-name-error">{errors.name}</span>
+              )}
             </FormControl>
           </Grid>
 
@@ -258,12 +259,16 @@ const CreateRepoForm: React.FC<CreateRepoFormProps> = ({ onSuccess }) => {
         open={showError}
         autoHideDuration={6000}
         onClose={() => setShowError(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <SnackbarContent
-          message={errorMessage}
-          style={{ backgroundColor: '#f44336', color: 'white' }}
-          action={<ErrorIcon style={{ color: 'white' }} />}
+          sx={{ backgroundColor: 'error.main', color: 'white' }}
+          message={
+            <span style={{ display: 'flex', alignItems: 'center' }} data-testid="repo-create-error">
+              <ErrorIcon sx={{ mr: 1 }} />
+              {errorMessage}
+            </span>
+          }
         />
       </Snackbar>
     </Paper>
