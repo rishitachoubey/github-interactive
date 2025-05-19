@@ -1,12 +1,50 @@
-import React from 'react';
-import { Container, Typography, Box, Button } from '@material-ui/core';
-import { BrowserRouter as Router, Route, Switch, useHistory } from 'react-router-dom';
-import { Add as AddIcon } from '@material-ui/icons';
+import React, { useState, useMemo } from 'react';
+import { Container, Typography, Box, Button, IconButton } from '@mui/material';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import AddIcon from '@mui/icons-material/Add';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import GitHubRepoList from './components/GitHubRepoList';
 import CreateRepoPage from './pages/CreateRepoPage';
 
-const HomePage: React.FC = () => {
-  const history = useHistory();
+// Error Boundary Component
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Error caught by boundary:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <Container>
+          <Box my={4}>
+            <Typography color="error" variant="h5">
+              Something went wrong:
+            </Typography>
+            <Typography color="error">
+              {this.state.error?.toString()}
+            </Typography>
+          </Box>
+        </Container>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+const HomePage: React.FC<{ toggleDarkMode: () => void; darkMode: boolean }> = ({ toggleDarkMode, darkMode }) => {
+  const navigate = useNavigate();
 
   return (
     <Container maxWidth="lg">
@@ -20,30 +58,57 @@ const HomePage: React.FC = () => {
               GitHub Interactive React Application
             </Typography>
           </Box>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            size="large"
-            onClick={() => history.push('/create-repo')}
-          >
-            Create Repository
-          </Button>
+          <Box display="flex" alignItems="center" gap={2}>
+            <IconButton onClick={toggleDarkMode} color="inherit" aria-label="toggle dark mode">
+              {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+            </IconButton>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              size="large"
+              onClick={() => navigate('/create-repo')}
+            >
+              Create Repository
+            </Button>
+          </Box>
         </Box>
-        <GitHubRepoList />
+        <ErrorBoundary>
+          <GitHubRepoList />
+        </ErrorBoundary>
       </Box>
     </Container>
   );
 };
 
 const App: React.FC = () => {
+  const [darkMode, setDarkMode] = useState(false);
+  const toggleDarkMode = () => setDarkMode((prev) => !prev);
+  const theme = useMemo(() =>
+    createTheme({
+      palette: {
+        mode: darkMode ? 'dark' : 'light',
+        primary: {
+          main: '#1976d2',
+        },
+        secondary: {
+          main: '#dc004e',
+        },
+      },
+    }), [darkMode]);
+
   return (
-    <Router>
-      <Switch>
-        <Route exact path="/" component={HomePage} />
-        <Route path="/create-repo" component={CreateRepoPage} />
-      </Switch>
-    </Router>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <ErrorBoundary>
+        <Router>
+          <Routes>
+            <Route path="/" element={<HomePage toggleDarkMode={toggleDarkMode} darkMode={darkMode} />} />
+            <Route path="/create-repo" element={<CreateRepoPage />} />
+          </Routes>
+        </Router>
+      </ErrorBoundary>
+    </ThemeProvider>
   );
 };
 

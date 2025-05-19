@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useMutation, gql } from '@apollo/client';
 import {
   Paper,
@@ -14,8 +14,8 @@ import {
   FormControl,
   FormHelperText,
   Grid,
-} from '@material-ui/core';
-import { Error as ErrorIcon } from '@material-ui/icons';
+} from '@mui/material';
+import ErrorIcon from '@mui/icons-material/Error';
 
 const GET_REPOS = gql`
   query {
@@ -162,7 +162,7 @@ const CreateRepoForm: React.FC<CreateRepoFormProps> = ({ onSuccess }) => {
 
       <form onSubmit={handleSubmit}>
         <Grid container spacing={3}>
-          <Grid item xs={12}>
+          <Grid sx={{ width: '100%' }}>
             <FormControl error={!!errors.name} fullWidth>
               <TextField
                 label="Repository Name"
@@ -177,15 +177,16 @@ const CreateRepoForm: React.FC<CreateRepoFormProps> = ({ onSuccess }) => {
                 inputProps={{
                   'aria-label': 'Repository name',
                   maxLength: 100,
+                  'data-testid': 'repo-name-input',
                 }}
               />
-              <FormHelperText>
-                Only letters, numbers, hyphens, and underscores are allowed
-              </FormHelperText>
+              {errors.name && (
+                <span data-testid="repo-name-error">{errors.name}</span>
+              )}
             </FormControl>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid sx={{ width: '100%' }}>
             <TextField
               label="Description (optional)"
               name="description"
@@ -204,7 +205,7 @@ const CreateRepoForm: React.FC<CreateRepoFormProps> = ({ onSuccess }) => {
             />
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid sx={{ width: '100%' }}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -218,7 +219,7 @@ const CreateRepoForm: React.FC<CreateRepoFormProps> = ({ onSuccess }) => {
             />
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid sx={{ width: '100%' }}>
             <Box display="flex" justifyContent="flex-end">
               <Button
                 type="submit"
@@ -251,12 +252,16 @@ const CreateRepoForm: React.FC<CreateRepoFormProps> = ({ onSuccess }) => {
         open={showError}
         autoHideDuration={6000}
         onClose={() => setShowError(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <SnackbarContent
-          message={errorMessage}
-          style={{ backgroundColor: '#f44336', color: 'white' }}
-          action={<ErrorIcon style={{ color: 'white' }} />}
+          sx={{ backgroundColor: 'error.main', color: 'white' }}
+          message={
+            <span style={{ display: 'flex', alignItems: 'center' }} data-testid="repo-create-error">
+              <ErrorIcon sx={{ mr: 1 }} />
+              {errorMessage}
+            </span>
+          }
         />
       </Snackbar>
     </Paper>
