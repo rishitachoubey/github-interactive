@@ -1,7 +1,10 @@
-import React, { useEffect } from 'react';
-import { Container, Typography, Box, Button } from '@mui/material';
+import React, { useState, useMemo } from 'react';
+import { Container, Typography, Box, Button, IconButton } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import GitHubRepoList from './components/GitHubRepoList';
 import CreateRepoPage from './pages/CreateRepoPage';
 
@@ -40,7 +43,7 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
   }
 }
 
-const HomePage: React.FC = () => {
+const HomePage: React.FC<{ toggleDarkMode: () => void; darkMode: boolean }> = ({ toggleDarkMode, darkMode }) => {
   const navigate = useNavigate();
 
   return (
@@ -55,15 +58,20 @@ const HomePage: React.FC = () => {
               GitHub Interactive React Application
             </Typography>
           </Box>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            size="large"
-            onClick={() => navigate('/create-repo')}
-          >
-            Create Repository
-          </Button>
+          <Box display="flex" alignItems="center" gap={2}>
+            <IconButton onClick={toggleDarkMode} color="inherit" aria-label="toggle dark mode">
+              {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+            </IconButton>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              size="large"
+              onClick={() => navigate('/create-repo')}
+            >
+              Create Repository
+            </Button>
+          </Box>
         </Box>
         <ErrorBoundary>
           <GitHubRepoList />
@@ -74,15 +82,33 @@ const HomePage: React.FC = () => {
 };
 
 const App: React.FC = () => {
+  const [darkMode, setDarkMode] = useState(false);
+  const toggleDarkMode = () => setDarkMode((prev) => !prev);
+  const theme = useMemo(() =>
+    createTheme({
+      palette: {
+        mode: darkMode ? 'dark' : 'light',
+        primary: {
+          main: '#1976d2',
+        },
+        secondary: {
+          main: '#dc004e',
+        },
+      },
+    }), [darkMode]);
+
   return (
-    <ErrorBoundary>
-      <Router>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/create-repo" element={<CreateRepoPage />} />
-        </Routes>
-      </Router>
-    </ErrorBoundary>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <ErrorBoundary>
+        <Router>
+          <Routes>
+            <Route path="/" element={<HomePage toggleDarkMode={toggleDarkMode} darkMode={darkMode} />} />
+            <Route path="/create-repo" element={<CreateRepoPage />} />
+          </Routes>
+        </Router>
+      </ErrorBoundary>
+    </ThemeProvider>
   );
 };
 

@@ -9,4 +9,28 @@ export const CREATE_REPOSITORY = gql`
       visibility
     }
   }
+`;
+
+export const UPDATE_REPOSITORY = gql`
+  mutation UpdateRepository($repositoryId: ID!, $description: String) {
+    updateRepository(input: {repositoryId: $repositoryId, description: $description}) {
+      repository {
+        id
+        name
+        description
+        visibility
+      }
+    }
+  }
+`;
+
+export const DELETE_REPOSITORY = gql`
+  mutation DeleteRepository($repositoryId: ID!) {
+    deleteRepository(input: {repositoryId: $repositoryId}) {
+      repository {
+        id
+        name
+      }
+    }
+  }
 `; 
