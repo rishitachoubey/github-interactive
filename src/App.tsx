@@ -43,10 +43,6 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log('HomePage mounted');
-  }, []);
-
   return (
     <Container maxWidth="lg">
       <Box my={4}>
@@ -78,10 +74,6 @@ const HomePage: React.FC = () => {
 };
 
 const App: React.FC = () => {
-  useEffect(() => {
-    console.log('App mounted');
-  }, []);
-
   return (
     <ErrorBoundary>
       <Router>

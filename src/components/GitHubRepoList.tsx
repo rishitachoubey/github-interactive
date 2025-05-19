@@ -31,21 +31,9 @@ interface SelectedRepo {
 
 const GitHubRepoList: React.FC = () => {
   const [selectedRepo, setSelectedRepo] = useState<SelectedRepo | null>(null);
-  const { loading, error, data } = useQuery(GET_REPOS, {
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    },
-    onCompleted: (data) => {
-      console.log('Query completed:', data);
-    }
-  });
-
-  useEffect(() => {
-    console.log('GitHubRepoList mounted, loading:', loading, 'error:', error, 'data:', data);
-  }, [loading, error, data]);
+  const { loading, error, data } = useQuery(GET_REPOS);
 
   const handleRepoClick = (repo: any) => {
-    console.log('Repo clicked:', repo);
     setSelectedRepo({
       name: repo.name,
       owner: repo.owner.login,
@@ -57,7 +45,6 @@ const GitHubRepoList: React.FC = () => {
   };
 
   if (loading) {
-    console.log('Loading repositories...');
     return (
       <Box display="flex" justifyContent="center" my={4}>
         <CircularProgress />
@@ -66,7 +53,6 @@ const GitHubRepoList: React.FC = () => {
   }
 
   if (error) {
-    console.error('Error loading repositories:', error);
     return (
       <Alert severity="error" sx={{ my: 2 }}>
         Error loading repositories: {error.message}
@@ -80,7 +66,6 @@ const GitHubRepoList: React.FC = () => {
   }
 
   if (!data?.viewer) {
-    console.error('No viewer data in response:', data);
     return (
       <Alert severity="error" sx={{ my: 2 }}>
         Unable to fetch repository data. Please check your GitHub token.
@@ -89,7 +74,6 @@ const GitHubRepoList: React.FC = () => {
   }
 
   const repos = data.viewer.repositories?.nodes || [];
-  console.log('Rendering repositories:', repos.length);
 
   return (
     <Paper style={{ padding: 24, marginTop: 32 }}>

@@ -103,10 +103,6 @@ const CreateRepoForm: React.FC<CreateRepoFormProps> = ({ onSuccess }) => {
     awaitRefetchQueries: true,
   });
 
-  useEffect(() => {
-    console.log('CreateRepoForm mounted');
-  }, []);
-
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
@@ -128,7 +124,6 @@ const CreateRepoForm: React.FC<CreateRepoFormProps> = ({ onSuccess }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Submitting form', formData);
     if (!validateForm()) return;
 
     try {
@@ -139,9 +134,7 @@ const CreateRepoForm: React.FC<CreateRepoFormProps> = ({ onSuccess }) => {
           visibility: formData.visibility,
         },
       });
-      console.log('Repository creation mutation sent');
     } catch (error) {
-      console.error('Error in mutation', error);
       // Error is handled in onError callback
     }
   };

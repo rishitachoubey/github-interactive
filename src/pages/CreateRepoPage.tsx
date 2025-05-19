@@ -7,13 +7,8 @@ import CreateRepoForm from '../components/CreateRepoForm';
 const CreateRepoPage: React.FC = () => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log('CreateRepoPage mounted');
-  }, []);
-
-  const handleRepoCreated = (repository: any) => {
-    console.log('Repository created:', repository);
-    navigate('/'); // Navigate back to home after successful creation
+  const handleSuccess = (repository: any) => {
+    navigate('/');
   };
 
   return (
@@ -31,7 +26,7 @@ const CreateRepoPage: React.FC = () => {
             Create New Repository
           </Typography>
         </Box>
-        <CreateRepoForm onSuccess={handleRepoCreated} />
+        <CreateRepoForm onSuccess={handleSuccess} />
       </Box>
     </Container>
   );
