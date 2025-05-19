@@ -227,3 +227,9 @@ For more detailed performance profiling, use browser dev tools and Vite's built-
 ## License
 
 MIT 
+
+## Extra Enhancements
+
+- **Dark Mode Toggle:** Easily switch between light and dark themes using the toggle in the header for a comfortable viewing experience in any environment.
+- **Edit Repository Description:** Inline editing of repository descriptions directly from the repository list for quick updates.
+- **UI Improvements:** Enhanced the pull request modal and overall UI for better appearance and usability in both light and dark modes. 

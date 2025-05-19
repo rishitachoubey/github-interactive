@@ -24,6 +24,7 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import SortIcon from '@mui/icons-material/Sort';
+import { useTheme, alpha } from '@mui/material/styles';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -88,6 +89,7 @@ const RepoDetailsModal: React.FC<RepoDetailsModalProps> = ({ open, onClose, repo
   const [sortField, setSortField] = useState<SortField>('CREATED_AT');
   const [sortDirection, setSortDirection] = useState<SortDirection>('DESC');
   const [endCursor, setEndCursor] = useState<string | null>(null);
+  const theme = useTheme();
 
   const { loading, error, data, fetchMore } = useQuery(GET_REPO_DETAILS, {
     variables: {
@@ -175,25 +177,31 @@ const RepoDetailsModal: React.FC<RepoDetailsModalProps> = ({ open, onClose, repo
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>
+      <DialogTitle sx={{
+        bgcolor: theme.palette.mode === 'dark' ? alpha(theme.palette.background.paper, 0.95) : undefined,
+        color: theme.palette.text.primary
+      }}>
         <Grid container sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
           <Grid sx={{ flexGrow: 1 }}>
-            <Typography variant="h6">
+            <Typography variant="h6" color="textPrimary">
               {repoOwner}/{repoName} - Pull Requests
             </Typography>
           </Grid>
           <Grid>
-            <IconButton onClick={onClose} size="small">
+            <IconButton onClick={onClose} size="small" sx={{ color: theme.palette.text.primary }}>
               <CloseIcon />
             </IconButton>
           </Grid>
         </Grid>
       </DialogTitle>
 
-      <Box px={2}>
+      <Box px={2} pt={2} pb={0} sx={{
+        bgcolor: theme.palette.mode === 'dark' ? alpha(theme.palette.background.paper, 0.92) : undefined,
+        borderBottom: `1px solid ${theme.palette.divider}`
+      }}>
         <Grid container spacing={2} sx={{ alignItems: 'center' }}>
           <Grid sx={{ flexGrow: 1 }}>
-            <Tabs value={activeTab} onChange={handleTabChange}>
+            <Tabs value={activeTab} onChange={handleTabChange} textColor="inherit" indicatorColor="primary">
               <Tab label="Open" value="OPEN" />
               <Tab label="Closed" value="CLOSED" />
             </Tabs>
@@ -205,6 +213,7 @@ const RepoDetailsModal: React.FC<RepoDetailsModalProps> = ({ open, onClose, repo
                 value={sortField}
                 onChange={(e) => setSortField(e.target.value as SortField)}
                 label="Sort By"
+                sx={{ color: theme.palette.text.primary }}
               >
                 <MenuItem value="CREATED_AT">Created Date</MenuItem>
                 <MenuItem value="UPDATED_AT">Updated Date</MenuItem>
@@ -217,6 +226,7 @@ const RepoDetailsModal: React.FC<RepoDetailsModalProps> = ({ open, onClose, repo
               size="small"
               startIcon={<SortIcon />}
               onClick={() => setSortDirection(sortDirection === 'ASC' ? 'DESC' : 'ASC')}
+              sx={{ color: theme.palette.text.primary, borderColor: theme.palette.divider }}
             >
               {sortDirection === 'ASC' ? 'Ascending' : 'Descending'}
             </Button>
@@ -224,31 +234,78 @@ const RepoDetailsModal: React.FC<RepoDetailsModalProps> = ({ open, onClose, repo
         </Grid>
       </Box>
 
-      <DialogContent>
+      <DialogContent sx={{
+        bgcolor: theme.palette.mode === 'dark' ? alpha(theme.palette.background.paper, 0.90) : undefined,
+        color: theme.palette.text.primary,
+        minHeight: 300
+      }}>
         {loading && !data && <CircularProgress />}
         {error && <Typography color="error">Error loading pull requests: {error.message}</Typography>}
         {data && (
           <>
-            <List>
+            <List sx={{ bgcolor: 'transparent' }}>
               {data.repository.pullRequests.nodes.map((pr: any) => (
                 <React.Fragment key={pr.id}>
-                  <ListItem component="a" href={pr.url} target="_blank" rel="noopener noreferrer">
+                  <ListItem
+                    component="a"
+                    href={pr.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      bgcolor: theme.palette.mode === 'dark' ? alpha(theme.palette.background.default, 0.7) : undefined,
+                      borderRadius: 2,
+                      mb: 1,
+                      '&:hover': {
+                        bgcolor: theme.palette.action.hover
+                      }
+                    }}
+                  >
                     <ListItemText
                       primary={
                         <Box display="flex" alignItems="center" flexWrap="wrap" gap={1}>
-                          <Typography variant="subtitle1">
+                          <Typography variant="subtitle1" color="textPrimary">
                             #{pr.number} {pr.title}
                           </Typography>
                           <Chip
                             label={pr.state}
                             size="small"
                             color={getStateColor(pr.state)}
+                            sx={{
+                              bgcolor: pr.state === 'OPEN'
+                                ? theme.palette.success.dark
+                                : pr.state === 'MERGED'
+                                ? theme.palette.secondary.dark
+                                : theme.palette.grey[700],
+                              color: theme.palette.getContrastText(
+                                pr.state === 'OPEN'
+                                  ? theme.palette.success.dark
+                                  : pr.state === 'MERGED'
+                                  ? theme.palette.secondary.dark
+                                  : theme.palette.grey[700]
+                              ),
+                              fontWeight: 600
+                            }}
                           />
                           {pr.reviewDecision && (
                             <Chip
                               label={pr.reviewDecision.toLowerCase()}
                               size="small"
                               color={getReviewDecisionColor(pr.reviewDecision)}
+                              sx={{
+                                bgcolor: pr.reviewDecision === 'APPROVED'
+                                  ? theme.palette.info.dark
+                                  : pr.reviewDecision === 'CHANGES_REQUESTED'
+                                  ? theme.palette.error.dark
+                                  : theme.palette.grey[700],
+                                color: theme.palette.getContrastText(
+                                  pr.reviewDecision === 'APPROVED'
+                                    ? theme.palette.info.dark
+                                    : pr.reviewDecision === 'CHANGES_REQUESTED'
+                                    ? theme.palette.error.dark
+                                    : theme.palette.grey[700]
+                                ),
+                                fontWeight: 600
+                              }}
                             />
                           )}
                         </Box>
@@ -275,7 +332,7 @@ const RepoDetailsModal: React.FC<RepoDetailsModalProps> = ({ open, onClose, repo
                       }
                     />
                   </ListItem>
-                  <Divider />
+                  <Divider sx={{ bgcolor: theme.palette.divider }} />
                 </React.Fragment>
               ))}
               {data.repository.pullRequests.nodes.length === 0 && (
@@ -290,6 +347,7 @@ const RepoDetailsModal: React.FC<RepoDetailsModalProps> = ({ open, onClose, repo
                   variant="outlined"
                   onClick={handleLoadMore}
                   disabled={loading}
+                  sx={{ color: theme.palette.text.primary, borderColor: theme.palette.divider }}
                 >
                   {loading ? <CircularProgress size={24} /> : 'Load More'}
                 </Button>
