@@ -1,12 +1,47 @@
-import React from 'react';
-import { Container, Typography, Box, Button } from '@material-ui/core';
-import { BrowserRouter as Router, Route, Switch, useHistory } from 'react-router-dom';
-import { Add as AddIcon } from '@material-ui/icons';
+import React, { useEffect } from 'react';
+import { Container, Typography, Box, Button } from '@mui/material';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import AddIcon from '@mui/icons-material/Add';
 import GitHubRepoList from './components/GitHubRepoList';
 import CreateRepoPage from './pages/CreateRepoPage';
 
+// Error Boundary Component
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Error caught by boundary:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <Container>
+          <Box my={4}>
+            <Typography color="error" variant="h5">
+              Something went wrong:
+            </Typography>
+            <Typography color="error">
+              {this.state.error?.toString()}
+            </Typography>
+          </Box>
+        </Container>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 const HomePage: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   return (
     <Container maxWidth="lg">
@@ -25,12 +60,14 @@ const HomePage: React.FC = () => {
             color="primary"
             startIcon={<AddIcon />}
             size="large"
-            onClick={() => history.push('/create-repo')}
+            onClick={() => navigate('/create-repo')}
           >
             Create Repository
           </Button>
         </Box>
-        <GitHubRepoList />
+        <ErrorBoundary>
+          <GitHubRepoList />
+        </ErrorBoundary>
       </Box>
     </Container>
   );
@@ -38,12 +75,14 @@ const HomePage: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <Router>
-      <Switch>
-        <Route exact path="/" component={HomePage} />
-        <Route path="/create-repo" component={CreateRepoPage} />
-      </Switch>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/create-repo" element={<CreateRepoPage />} />
+        </Routes>
+      </Router>
+    </ErrorBoundary>
   );
 };
 

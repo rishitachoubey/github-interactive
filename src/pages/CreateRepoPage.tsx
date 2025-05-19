@@ -1,15 +1,14 @@
-import React from 'react';
-import { Container, Box, Typography, Button } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
-import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
+import React, { useEffect } from 'react';
+import { Container, Box, Typography, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CreateRepoForm from '../components/CreateRepoForm';
 
 const CreateRepoPage: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
-  const handleRepoCreated = (repository: any) => {
-    console.log('Repository created:', repository);
-    history.push('/'); // Navigate back to home after successful creation
+  const handleSuccess = (repository: any) => {
+    navigate('/');
   };
 
   return (
@@ -18,7 +17,7 @@ const CreateRepoPage: React.FC = () => {
         <Box display="flex" alignItems="center" mb={3}>
           <Button
             startIcon={<ArrowBackIcon />}
-            onClick={() => history.push('/')}
+            onClick={() => navigate('/')}
             style={{ marginRight: 16 }}
           >
             Back
@@ -27,7 +26,7 @@ const CreateRepoPage: React.FC = () => {
             Create New Repository
           </Typography>
         </Box>
-        <CreateRepoForm onSuccess={handleRepoCreated} />
+        <CreateRepoForm onSuccess={handleSuccess} />
       </Box>
     </Container>
   );
