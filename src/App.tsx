@@ -1,5 +1,6 @@
 import React from 'react';
 import { Container, Typography, Box } from '@material-ui/core';
+import GitHubRepoList from './components/GitHubRepoList';
 
 const App: React.FC = () => {
   return (
@@ -12,6 +13,7 @@ const App: React.FC = () => {
           A production-quality React application
         </Typography>
       </Box>
+      <GitHubRepoList />
     </Container>
   );
 };
