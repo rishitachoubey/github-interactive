@@ -14,14 +14,14 @@
     "node": "16.x"
   },
   "dependencies": {
-    "@apollo/client": "^3.8.10",
-    "@material-ui/core": "^4.12.4",
-    "@material-ui/icons": "^4.11.3",
-    "@types/react-router-dom": "^5.3.3",
-    "graphql": "^15.8.0",
-    "react": "^16.10.1",
-    "react-dom": "^16.10.1",
-    "react-router-dom": "^5.3.4"
+    "@apollo/client": "3.6.2",
+    "@material-ui/core": "4.12.4",
+    "@material-ui/icons": "4.11.3",
+    "@types/react-router-dom": "5.3.3",
+    "graphql": "15.8.0",
+    "react": "16.10.1",
+    "react-dom": "16.10.1",
+    "react-router-dom": "5.3.4"
   },
   "devDependencies": {
     "@babel/core": "^7.22.0",
@@ -35,6 +35,8 @@
     "@types/node": "^20.2.5",
     "@types/react": "^16.9.56",
     "@types/react-dom": "^16.9.9",
+    "ajv": "^6.12.6",
+    "ajv-keywords": "^3.5.2",
     "babel-loader": "^9.1.2",
     "css-loader": "^6.8.1",
     "dotenv": "^16.5.0",
