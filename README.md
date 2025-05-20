@@ -1,4 +1,4 @@
-# Staple
+# GitHub Interactive App
 
 A modern, production-quality React application demonstrating clean architecture, robust state management, and best practices for scalable web development.
 
@@ -19,6 +19,7 @@ _Deployed on Vercel_
 - **React 19**
 - **Apollo Client 3.6+**
 - **Material-UI (MUI) v7**
+- **Node.js v18.x**
 - **Vite** (replacing Webpack for faster builds and DX)
 - **TypeScript**
 - **Jest** for testing
