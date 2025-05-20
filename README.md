@@ -2,6 +2,11 @@
 
 A modern, production-quality React application demonstrating clean architecture, robust state management, and best practices for scalable web development.
 
+## Live Demo
+
+[github-interactive-lq7i.vercel.app](https://github-interactive-lq7i.vercel.app)  
+_Deployed on Vercel_
+
 ## Prerequisites
 
 - **Node.js v18.x** (see `.nvmrc` for recommended version)
