@@ -130,25 +130,6 @@ _Deployed on Vercel_
 - `npm run lint` — Checks code quality with ESLint
 - `npm run format` — Formats code using Prettier
 
-## Project Structure
-
-```
-github-interactive/
-├── src/
-│   ├── components/      # Reusable React components
-│   ├── pages/           # Page-level components
-│   ├── hooks/           # Custom React hooks
-│   ├── utils/           # Utility functions
-│   └── App.tsx          # Root component
-├── public/              # Static files
-├── dist/                # Production build output
-├── .env                 # Environment variables (not committed)
-├── vite.config.ts       # Vite configuration
-├── tsconfig.json        # TypeScript configuration
-├── .eslintrc.js         # ESLint configuration
-├── .prettierrc          # Prettier configuration
-└── package.json         # Project dependencies and scripts
-```
 
 ## Architectural Decisions
 
@@ -184,7 +165,7 @@ github-interactive/
    - Keep components small and focused
 
 2. **Git Workflow**
-   - Create feature branches from `main`
+   - Create feature branches from `development` and then merge to `main` altogether from `development`.
    - Write descriptive commit messages
    - Submit pull requests for review
 
